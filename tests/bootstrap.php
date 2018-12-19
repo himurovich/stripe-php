@@ -1,7 +1,13 @@
 <?php
 
+require_once(__DIR__ . '/StripeMock.php');
+
 define("MOCK_MINIMUM_VERSION", "0.39.0");
-define("MOCK_PORT", getenv("STRIPE_MOCK_PORT") ?: 12111);
+
+$port = \Stripe\StripeMock::start();
+define("MOCK_PORT", $port);
+
+register_shutdown_function('\Stripe\StripeMock::stop');
 
 // Send a request to stripe-mock
 $ch = curl_init("http://localhost:" . MOCK_PORT . "/");

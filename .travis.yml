@@ -15,6 +15,7 @@ php:
 env:
   global:
     - STRIPE_MOCK_VERSION=0.39.0
+    - STRIPE_MOCK_PORT=12111
   matrix:
     - AUTOLOAD=1
     - AUTOLOAD=0
@@ -37,7 +38,11 @@ before_install:
       tar -zxf "stripe-mock/stripe-mock_${STRIPE_MOCK_VERSION}_linux_amd64.tar.gz" -C "stripe-mock/stripe-mock_${STRIPE_MOCK_VERSION}/"
     fi
   - |
-    stripe-mock/stripe-mock_${STRIPE_MOCK_VERSION}/stripe-mock > /dev/null &
+    stripe-mock/stripe-mock_${STRIPE_MOCK_VERSION}/stripe-mock \
+      -http-port ${STRIPE_MOCK_PORT} \
+      -spec tests/openapi/spec3.json \
+      -fixtures tests/openapi/fixtures3.json \
+      > /dev/null &
     STRIPE_MOCK_PID=$!
 
 script: ./build.php ${AUTOLOAD}
